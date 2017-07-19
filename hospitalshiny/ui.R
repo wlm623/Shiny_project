@@ -12,7 +12,8 @@ shinyUI(dashboardPage(
             menuItem("Correlation", tabName = "corr", icon= icon("th")),
             menuItem("Map", tabName = "map2", icon = icon("map")),
             menuItem("Pie Chart", tabName= "pies", icon = icon("pie-chart")),
-            menuItem("Scatter Plot", tabName = "data", icon = icon("ellipsis-v"))
+            menuItem("Data", tabName = "dat", icon = icon("database")),
+            menuItem("Scatter Plot", tabName = "scatter", icon = icon("ellipsis-v"))
             
         )
     ),
@@ -46,17 +47,17 @@ shinyUI(dashboardPage(
                       plotlyOutput("plot")
                     )
                              ),
-            tabItem(tabName = "data",
+            tabItem(tabName = "scatter",
                     fluidRow(
                       selectizeInput("selected4",
                                      "Select Item to Display",
                                      choice)
                     ),
-                    #fluidRow(box(DT::dataTableOutput("table"), width = 12))
                     fluidRow(
                       plotlyOutput("plot2")
                     )
                     ),
+            
             tabItem(tabName = "pies",
                     fluidRow(
                       selectizeInput("selected3",
@@ -69,11 +70,18 @@ shinyUI(dashboardPage(
                     
                     
                     )
-                    
-                    
+                    ),
+            tabItem(tabName = "dat",
+                    fluidRow(
+                      selectizeInput("selected5",
+                                     "Select Item to Display",
+                                     choice[1:8])),
+                      fluidRow(box(DT::dataTableOutput("table"), width = 12))
                     )
+            
+              
+            )
           
         )
         )
     )
-)

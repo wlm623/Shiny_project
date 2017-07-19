@@ -36,13 +36,13 @@ shinyServer(function(input, output){
       samehosp = hospital  %>% filter(.,get(input$selected3) =='Same as the National average')  %>% group_by(.,Hospital.overall.rating)  %>% summarise(total=n())
       abovehosp = hospital  %>% filter(.,get(input$selected3) =='Above the National average')  %>% group_by(.,Hospital.overall.rating)  %>% summarise(total=n())
       p <- plot_ly() %>%
-        add_pie(data = belowhosp, labels = ~Hospital.overall.rating, values = ~total,
+        add_pie(data = belowhosp,labels = ~Hospital.overall.rating, values = ~total,
                 name = 'below', domain = list(x = c(0, 0.4), y = c(0.4, 1))) %>%
         add_pie(data = samehosp, labels = ~Hospital.overall.rating, values = ~total,
                 name = "same", domain = list(x = c(0.25, 0.75), y = c(0, 0.6))) %>%
         add_pie(data = abovehosp, labels = ~Hospital.overall.rating, values = ~total,
                 name = "above", domain = list(x = c(0.6, 1), y = c(0.4, 1))) %>%
-        layout(title = "Pie Charts with Subplots", showlegend = F,
+        layout(title = "Overall Rating Distribution by Comparison Values", showlegend = F,
                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
     })
@@ -64,10 +64,10 @@ shinyServer(function(input, output){
         )
     })
     
-    output$table <- DT::renderDataTable({
-      datatable(hospitalgroup3, rownames=FALSE) #%>% 
+    #output$table <- DT::renderDataTable({
+      #datatable(hospitalgroup3, rownames=FALSE) #%>% 
         #formatStyle(input$selected, background="skyblue", fontWeight='bold')
-    })
+    #})
     
     output$plot2 <- renderPlotly({
       hospitalgroup4 = hospital2 %>% group_by(., State) %>%
@@ -77,8 +77,17 @@ shinyServer(function(input, output){
               y = ~get(input$selected4),
               text= ~paste("State: ", State),
               height = 300) %>% 
-        layout(xaxis = list(title = "number"), yaxis = list(title = input$selected4))
+        layout(xaxis = list(title = "Number of Hospitals"), yaxis = list(title = input$selected4))
     })
+    
+    output$table <- DT::renderDataTable({
+      hospitalgroup5 = hospital2 %>% group_by(., State) %>%
+        summarise("total"=sum(!is.na(get(input$selected5)))) %>% 
+        inner_join(.,hospitalgroup) %>% 
+        select('State', input$selected5,"total")
+      datatable(hospitalgroup5, rownames=FALSE) %>% 
+      formatStyle(input$selected5, background="skyblue", fontWeight='bold')
+      })
     
 })
 
