@@ -9,42 +9,54 @@ shinyUI(dashboardPage(
         sidebarUserPanel("Will Markowitz",
                          image = "https://yt3.ggpht.com/-04uuTMHfDz4/AAAAAAAAAAI/AAAAAAAAAAA/Kjeupp-eNNg/s100-c-k-no-rj-c0xffffff/photo.jpg"),
         sidebarMenu(
+            menuItem("Correlation", tabName = "corr", icon= icon("th")),
             menuItem("Map", tabName = "map2", icon = icon("map")),
-            menuItem("Data", tabName = "data", icon = icon("database")),
-            menuItem("Pies", tabName= "pies", icon = icon("pie-chart"))
-        )#,
-        # selectizeInput("selected4",
-        #                "Select Item to Display",
-        #                choice), #this is an input called selected
-        # selectizeInput("selected420",
-        #                "Select Item to Display2",
-        #                choice)
+            menuItem("Pie Chart", tabName= "pies", icon = icon("pie-chart")),
+            menuItem("Scatter Plot", tabName = "data", icon = icon("ellipsis-v"))
+            
+        )
     ),
-    dashboardBody( #BO
+    dashboardBody( 
         tags$head(
             tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
         ),
         tabItems(
+            tabItem(tabName = "corr",
+                    fluidRow(plotlyOutput("heat"))
+                    ),
             tabItem(tabName = "map2",
+                    
+                    fluidRow(
+                      selectizeInput("selected",
+                                     "Select Item to Display on Left",
+                                     choice),
+                      selectizeInput("selected2",
+                                     "Select Item to Display on Right",
+                                     choice)
+                    ),
+                    
+                    
+                    
                     fluidRow(infoBoxOutput("maxBox"),
                              infoBoxOutput("minBox"),
                              infoBoxOutput("avgBox")),
                     fluidRow(box(htmlOutput("map2"), height = 300),
-                             box(htmlOutput("map"), height = 300),
-                             box(htmlOutput("scatter"))),
+                             box(htmlOutput("map"), height = 300)),
                     fluidRow(
-                      selectizeInput("selected",
-                                     "Select Item to Display1",
-                                     choice)
-                    ),
-                    fluidRow(
-                      selectizeInput("selected2",
-                                     "Select Item to Display23",
-                                     choice)
+                      plotlyOutput("plot")
                     )
                              ),
             tabItem(tabName = "data",
-                    fluidRow(box(DT::dataTableOutput("table"), width = 12))),
+                    fluidRow(
+                      selectizeInput("selected4",
+                                     "Select Item to Display",
+                                     choice)
+                    ),
+                    #fluidRow(box(DT::dataTableOutput("table"), width = 12))
+                    fluidRow(
+                      plotlyOutput("plot2")
+                    )
+                    ),
             tabItem(tabName = "pies",
                     fluidRow(
                       selectizeInput("selected3",
@@ -57,6 +69,7 @@ shinyUI(dashboardPage(
                     
                     
                     )
+                    
                     
                     )
           

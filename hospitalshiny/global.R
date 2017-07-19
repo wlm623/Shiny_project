@@ -1,6 +1,8 @@
 library(dplyr)
 library(data.table)
-setwd('~/Downloads/')
+library(plotly)
+
+
 hospital = fread('HospInfo.csv')
 hospital=setnames(hospital, make.names(colnames(hospital)))
 #footnotes=grep('footnote',colnames(hospital), perl = T) #to find unneeded footnote rows
@@ -33,7 +35,20 @@ hospital2$Patient.experience.national.comparison=as.numeric(myscore(hospital2$Pa
 hospital2$Effectiveness.of.care.national.comparison=as.numeric(myscore(hospital2$Effectiveness.of.care.national.comparison))
 hospital2$Timeliness.of.care.national.comparison=as.numeric(myscore(hospital2$Timeliness.of.care.national.comparison))
 hospital2$Efficient.use.of.medical.imaging.national.comparison=as.numeric(myscore(hospital2$Efficient.use.of.medical.imaging.national.comparison))
+hospitalgroup= hospital2 %>% 
+  group_by(.,State) %>% 
+  summarise_each(.,funs(mean(.,na.rm=TRUE)), Hospital.overall.rating,Mortality.national.comparison,Safety.of.care.national.comparison,
+                 Readmission.national.comparison,Patient.experience.national.comparison,Effectiveness.of.care.national.comparison,
+                 Timeliness.of.care.national.comparison, Efficient.use.of.medical.imaging.national.comparison) %>% 
+  filter(.,!is.na(Hospital.overall.rating)) %>% 
+  filter(., !is.na(Safety.of.care.national.comparison))
+
+hospitalgroup1= hospitalgroup
+colnames(hospitalgroup1)=c('State','Rating','Mortality', 'Safety', 'Readmission','Experience', 'Effectiveness', 'Timeliness', 'Imaging')
+hospitalgroup1=hospitalgroup1[,c(1,3,9,4,7,8,5,2,6)]
+
 choice <- colnames(hospitalgroup)[-1]
+
 
 
 
